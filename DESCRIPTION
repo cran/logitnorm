@@ -1,7 +1,7 @@
 Package: logitnorm
 Title: Functions for the logitnormal distribution.
-Version: 0.8.26
-Date: 2012-04-12
+Version: 0.8.29
+Date: 2012-08-24
 Author: Thomas Wutzler
 Maintainer: Thomas Wutzler <twutz@bgc-jena.mpg.de>
 Description: Density, distribution, quantile and random generation
@@ -12,6 +12,8 @@ Depends:
 Suggests: RUnit
 License: GPL-2
 LazyLoad: yes
-Packaged: 2012-04-16 14:53:49 UTC; twutz
 Repository: CRAN
-Date/Publication: 2012-04-16 16:05:47
+Repository/R-Forge/Project: logitnorm
+Repository/R-Forge/Revision: 31
+Packaged: 2012-08-27 14:20:22 UTC; rforge
+Date/Publication: 2012-08-28 14:45:36
