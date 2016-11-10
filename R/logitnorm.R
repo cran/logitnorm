@@ -46,49 +46,31 @@ plogitnorm <- function(
 	pnorm(ql,mean=mu,sd=sigma,...)
 }
 
+
 dlogitnorm <- function(
-	### Density function of logitnormal distribution	
-	q		##<< quantiles
-	,mu = 0, sigma = 1	##<< distribution parameters
-	,...	##<< further arguments passed to \code{\link{dnorm}}: \code{mean}, and \code{sd} for mu and sigma respectively.  
+        ### Density function of logitnormal distribution	
+        q		##<< quantiles
+        ,mu = 0, sigma = 1	##<< distribution parameters
+        ,log = FALSE    ##<< if TRUE, the log-density is returned
+        ,...	##<< further arguments passed to \code{\link{dnorm}}: \code{mean}, and \code{sd} for mu and sigma respectively.  
 ){
-	##alias<< logitnorm
-	
-	##details<< \describe{\item{Logitnorm distribution}{ 
-	## \itemize{
-	## \item{density function: dlogitnorm }
-	## \item{distribution function: \code{\link{plogitnorm}} }
-	## \item{quantile function: \code{\link{qlogitnorm}} }
-	## \item{random generation function: \code{\link{rlogitnorm}} }
-	## }
-	## }}
-	
-	##details<< \describe{\item{Transformation functions}{ 
-	## \itemize{
-	## \item{ (0,1) -> (-Inf,Inf): \code{\link{logit}} }
-	## \item{ (-Inf,Inf) -> (0,1): \code{\link{invlogit}} }
-	## }
-	## }}
-	
-	##details<< \describe{\item{Moments and mode}{ 
-	## \itemize{
-	## \item{ Expected value and variance: \code{\link{momentsLogitnorm}} }
-	## \item{ Mode: \code{\link{modeLogitnorm}} }
-	## }
-	## }}
-	
-	##details<< \describe{\item{Estimating parameters}{ 
-	## \itemize{
-	## \item{from mode and upper quantile: \code{\link{twCoefLogitnormMLE}} }
-	## \item{from median and upper quantile: \code{\link{twCoefLogitnorm}} }
-	## \item{from expected value, i.e. mean and upper quantile: \code{\link{twCoefLogitnormE}} }
-	## \item{from a confidence interval which is symmetric at normal scale: \code{\link{twCoefLogitnormCi}} }
-	## \item{from prescribed quantiles: \code{\link{twCoefLogitnormN}} }
-	## }
-	## }}
-	
-	ql <- qlogis(q)
-	dnorm(ql,mean=mu,sd=sigma,...) /q/(1-q)	# multiply by the Jacobian (derivative) of the back-Transformation (logit)
+    ##details<< \describe{\item{Logitnorm distribution}{ 
+    ## \itemize{
+    ## \item{density function: dlogitnorm }
+    ## \item{distribution function: \code{\link{plogitnorm}} }
+    ## \item{quantile function: \code{\link{qlogitnorm}} }
+    ## \item{random generation function: \code{\link{rlogitnorm}} }
+    ## }
+    ## }}
+	##seealso<< \code{\link{logitnorm}}
+    
+    ql <- qlogis(q)
+    # multiply (or add in the log domain) by the Jacobian (derivative) of the back-Transformation (logit)
+    if (log) {
+        dnorm(ql,mean=mu,sd=sigma,log=TRUE,...) - log(q) - log1p(-q)
+    } else {
+        dnorm(ql,mean=mu,sd=sigma,...) /q/(1-q)
+    }
 }
 
 qlogitnorm <- function(
@@ -147,14 +129,19 @@ twCoefLogitnormN <- function(
 }
 #mtrace(coefLogitnorm)
 attr(twCoefLogitnormN,"ex") <- function(){
-	# estimate the parameters
-	quant=c(0.7,0.8,0.9)
-	perc=c(0.5,0.75,0.975)
-	(theta <- twCoefLogitnormN( quant=quant, perc=perc ))
-	
+    # experiment of re-estimation the parameters from generated observations
+    thetaTrue <- c(mu=0.8, sigma=0.7)
+    obsTrue <- rlogitnorm(thetaTrue["mu"],thetaTrue["sigma"], n=500)
+    obs <- obsTrue + rnorm(100, sd=0.05)        # some observation uncertainty
+    plot(density(obsTrue),col="blue"); lines(density(obs))
+    
+    # re-estimate parameters based on the quantiles of the observations
+	(theta <- twCoefLogitnorm( median(obs), quantile(obs,probs=0.9), perc = 0.9))
+
+    # add line of estimated distribution
 	x <- seq(0,1,length.out=41)[-c(1,41)]	# plotting grid
-	px <- plogitnorm(x,mu=theta[1],sigma=theta[2])	#percentiles function
-	plot(px~x); abline(v=quant,col="gray"); abline(h=perc,col="gray")
+    dx <- dlogitnorm(x,mu=theta[1],sigma=theta[2])
+    lines( dx ~ x, col="orange")
 }
 
 twCoefLogitnorm <- function(
@@ -279,6 +266,7 @@ twCoefLogitnormMLE <- function(
 		tmp <- sign(logitMle)*log(seq(1,exp(upper),length.out=40))
 		oftmp<-.ofLogitnormMLE(tmp, mle=(mleI), logitMle=logitMle, quant=(quantI<-quant[1+i0%%nc[2]]), perc=(percI<-perc[1+i0%%nc[3]]))
 		#plot(tmp,oftmp)
+        # now optimize starting from the near minimum
 		imin <- which.min(oftmp)
 		intv <- tmp[ c(max(1,imin-1), min(length(tmp),imin+1)) ]
 		if( diff(intv)==0 ) mu <- intv[1] else
@@ -304,6 +292,21 @@ attr(twCoefLogitnormMLE,"ex") <- function(){
 	
 	# vectorized
 	(theta <- twCoefLogitnormMLE(mle=seq(0.4,0.8,by=0.1),quant=0.9))
+    
+    # flat
+    (theta <- twCoefLogitnormMLEFlat(0.7))
+}
+
+twCoefLogitnormMLEFlat <- function(
+		### Estimating coefficients of a maximally flat unimodal logitnormal distribution from mode 	
+		mle						##<< numeric vector: the mode of the density function
+){
+	##details<<
+	## When increasing the sigma parameter, the distribution becomes
+	## eventually becomes bi-model, i.e. has two maxima.	
+	## This function estimates parameters for given mode, so that the distribution assigns high  
+	## densitiy to a maximum range, i.e. is maximally flat, but still is unimodal.
+	twCoefLogitnormMLE(mle,0)
 }
 
 .ofLogitnormE <- function(
@@ -422,6 +425,8 @@ twSigmaLogitnorm <- function(
 	mle		##<< numeric vector: the mode of the density function
 	,mu=0	##<< for mu=0 the distribution will be the flattest case (maybe bimodal) 
 ){
+    ##details<<
+    ## For a mostly flat unimodal distribution use \code{\link{twCoefLogitnormMLE}(mle,0)}
 	sigma = sqrt( (logit(mle)-mu)/(2*mle-1) )
 	##seealso<< \code{\link{logitnorm}}
 	# twSigmaLogitnorm
@@ -431,18 +436,16 @@ twSigmaLogitnorm <- function(
 }
 #mtrace(coefLogitnorm)
 attr(twSigmaLogitnorm,"ex") <- function(){
-	
-	# estimate the parameters, with mode 0.7 and upper quantile 0.9
-	(theta <- twCoefLogitnormMLE(0.7,0.9))
-	
+    mle <- 0.8
+    (theta <- twSigmaLogitnorm(mle))
+    #
 	x <- seq(0,1,length.out=41)[-c(1,41)]	# plotting grid
 	px <- plogitnorm(x,mu=theta[1],sigma=theta[2])	#percentiles function
-	plot(px~x); abline(v=c(0.7,0.9),col="gray"); abline(h=c(0.999),col="gray")
+	plot(px~x); abline(v=c(mle),col="gray")
 	dx <- dlogitnorm(x,mu=theta[1],sigma=theta[2])	#density function
-	plot(dx~x); abline(v=c(0.7,0.9),col="gray")
-	
+	plot(dx~x); abline(v=c(mle),col="gray")
 	# vectorized
-	(theta <- twCoefLogitnormMLE(mle=seq(0.4,0.8,by=0.1),quant=0.9))
+	(theta <- twSigmaLogitnorm(mle=seq(0.401,0.8,by=0.1)))
 }
 
 
