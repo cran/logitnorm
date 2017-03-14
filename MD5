@@ -1,10 +1,10 @@
-05bb89080604f28fff781468b2a4fa8f *DESCRIPTION
+3fb656ed0d3ccd8628b8e7f34bbbbf77 *DESCRIPTION
 d69cce24840b6e94ec6c68202a84aef1 *NAMESPACE
+dd43f8c05350afa56c105f37acd4b7bf *NEWS.md
 3f3f6fae05270f9261c951382375cc78 *R/logitnorm.R
-3dde71067aedcf39255c8b3787ab3bb0 *README.md
-7086d0cb48746c7373ccd6180b9a87a3 *build/vignette.rds
+8ad6faef1a47a4658d122b1db9b9abf5 *build/vignette.rds
 e6b7abbb42737fb1d43080e8e67cf3d4 *inst/doc/logitnorm.Rmd
-66ec3d46e6e835dcdaa7abcf61c09e62 *inst/doc/logitnorm.html
+f4660e2501136f81fe1ced533763ae9a *inst/doc/logitnorm.html
 de596fa7c2de1f88bdf49f60e1586a04 *inst/exploreLogitNormal.R
 bba53b0bdd5575f92ba6f2b3e269e450 *inst/genData/_genPackage.R
 658caf4f2a10a3bc0198e7f8fc4a895e *inst/genData/logitnorm-package.Rd
@@ -29,4 +29,5 @@ a509604ceeecd693a5467a48c2be6c0c *man/twCoefLogitnormMLEFlat.Rd
 2bc35d03820c5833ef1a909ee6003130 *man/twCoefLogitnormN.Rd
 88c01375ce098105cf4187ea7a88b9a7 *man/twSigmaLogitnorm.Rd
 197c5bef7944afe400a3580fd54db65a *tests/doRUnit.R
+a57735352adf300c73849b0797c9e031 *tools/README-example-1.png
 e6b7abbb42737fb1d43080e8e67cf3d4 *vignettes/logitnorm.Rmd
