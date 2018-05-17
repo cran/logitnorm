@@ -305,7 +305,7 @@ twCoefLogitnormMLEFlat <- function(
 	## When increasing the sigma parameter, the distribution becomes
 	## eventually becomes bi-model, i.e. has two maxima.	
 	## This function estimates parameters for given mode, so that the distribution assigns high  
-	## densitiy to a maximum range, i.e. is maximally flat, but still is unimodal.
+	## density to a maximum range, i.e. is maximally flat, but still is unimodal.
 	twCoefLogitnormMLE(mle,0)
 }
 
@@ -332,7 +332,7 @@ twCoefLogitnormE <- function(
 	,perc=c(0.975)			##<< the probabilites for which the quantiles were specified
 	,method="BFGS"			##<< method of optimization (see \code{\link{optim}})
 	,theta0=c(mu=0,sigma=1)	##<< starting parameters
-	,returnDetails=FALSE	##<< if TRUE, the full output of optim is returned with attribut resOptim
+	,returnDetails=FALSE	##<< if TRUE, the full output of optim is returned with attribute resOptim
 	, ... 
 ){
 	##seealso<< \code{\link{logitnorm}}
@@ -379,7 +379,7 @@ momentsLogitnorm <- function(
 	### First two moments of the logitnormal distribution by numerical integration
 	mu	##<< parameter mu 
 	,sigma		##<< parameter sigma
-	,abs.tol=0	##<< chaning default to \code{\link{integrate}}
+	,abs.tol=0	##<< changing default to \code{\link{integrate}}
 	,...		##<< further parameters to the \code{\link{integrate}} function
 ){
 	fExp <- function(x)  plogis(x)*dnorm(x,mean=mu,sd=sigma)
