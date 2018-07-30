@@ -1,3 +1,9 @@
+# logitnorm 0.8.37
+
+- Density returns 0 instead of NAN outside (0,1)
+- Changed first argument name of dlogitnorm from q to x
+- Document argument n of rlogitnorm
+
 # logitnorm 0.8.36
 Remove the library call to MASS.
 
