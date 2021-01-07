@@ -1,4 +1,4 @@
-## ----setup, include=FALSE------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 library(knitr)
 opts_chunk$set(out.extra='style="display:block; margin: auto"'
     #, fig.align="center"
@@ -56,25 +56,25 @@ p1 <- ggplot(ds, aes(x=x, y=value, color=sigma, linetype=sigma)) + geom_line(siz
  theme()
 print(p1)
 
-## ----cumDensityPlot, spar=TRUE-------------------------------------------
+## ----cumDensityPlot, spar=TRUE------------------------------------------------
 x <- seq(0,1, length.out=81) 
 d <- plogitnorm(x, mu=0.5, sigma=0.5)
 plot(d~x,type="l")
 
-## ----momentsLogitnorm----------------------------------------------------
+## ----momentsLogitnorm---------------------------------------------------------
 (theta <- momentsLogitnorm(mu=0.6,sigma=0.5))
 
-## ----modeLogitnorm-------------------------------------------------------
+## ----modeLogitnorm------------------------------------------------------------
 (mle <- modeLogitnorm(mu=0.6,sigma=0.5))
 
-## ----twCoefLogitnormMLE--------------------------------------------------
+## ----twCoefLogitnormMLE-------------------------------------------------------
 (theta <- twCoefLogitnormMLE(0.7,0.9))
 x <- seq(0,1, length.out=81) 
 d <- dlogitnorm(x, mu=theta[1,"mu"], sigma=theta[1,"sigma"])
 plot(d~x,type="l")
 abline(v=c(0.7,0.9), col="grey")
 
-## ----twCoefLogitnormMLEFlat----------------------------------------------
+## ----twCoefLogitnormMLEFlat---------------------------------------------------
 (theta <- twCoefLogitnormMLEFlat(0.7))
 x <- seq(0,1, length.out=81) 
 d <- dlogitnorm(x, mu=theta[1,"mu"], sigma=theta[1,"sigma"])
